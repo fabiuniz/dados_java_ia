@@ -1,7 +1,7 @@
 <!-- 
   Tags: DadosIA
-  Label: 🎲 java com Dados e IA
-  Description: java com Dados e IA
+  Label: 🎲 Java com Dados e IA
+  Description: Java com Dados e IA
   path_hook: hookfigma.hook1
 -->
 
@@ -12,7 +12,7 @@
 </p>
 
 
-Este projeto é uma aplicação Java que utiliza uma rede neural para prever o preço de casas com base em suas características. Ele demonstra a capacidade do Java para lidar com tarefas de Machine Learning e Inteligência Artificial através de bibliotecas como **Deeplearning4j** e **ND4J**.
+Este projeto é uma aplicação Java que utiliza uma rede neural para prever o preço de casas com base em suas características. Ele demonstra a capacidade do Java para lidar com tarefas de Machine Learning e Inteligência Artificial(Nesse é uma IA de regressão, um tipo de IA discriminativa) através de bibliotecas como **Deeplearning4j** e **ND4J**.
 
 ## ⚙ Requisitos
 
