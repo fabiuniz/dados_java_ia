@@ -14,21 +14,22 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 
-@SpringBootApplication
-public class Application {
+@Service
+public class ModelService {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    private MultiLayerNetwork model;
+
+    @PostConstruct
+    public void init() throws Exception {
+        trainModel();
     }
 
-    @Bean
-    public MultiLayerNetwork trainedModel() throws Exception {
+    public void trainModel() throws Exception {
         System.out.println("Iniciando o treinamento do modelo...");
 
         File fileMusica = new File("src/main/resources/music_data.csv");
@@ -57,14 +58,17 @@ public class Application {
                         .nIn(15).nOut(numClasses).activation(Activation.SOFTMAX).build())
                 .build();
 
-        MultiLayerNetwork model = new MultiLayerNetwork(conf);
-        model.init();
+        this.model = new MultiLayerNetwork(conf);
+        this.model.init();
 
         for (int i = 0; i < nEpochs; i++) {
-            model.fit(allData);
+            this.model.fit(allData);
         }
 
         System.out.println("Treinamento de classificação de gênero concluído!");
+    }
+
+    public MultiLayerNetwork getModel() {
         return model;
     }
 }
