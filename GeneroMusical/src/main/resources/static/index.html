@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Classificador de Gênero Musical</title>
+</head>
+<body>
+    <h1>Classifique um Gênero Musical 🎸</h1>
+    <form id="predictionForm">
+        <label for="intervaloMedio">Intervalo Médio:</label><br>
+        <input type="number" step="0.1" id="intervaloMedio" name="intervaloMedio" required><br><br>
+
+        <label for="ritmoMedio">Ritmo Médio (BPM):</label><br>
+        <input type="number" id="ritmoMedio" name="ritmoMedio" required><br><br>
+
+        <label for="complexidadeRitmo">Complexidade do Ritmo (0.0-1.0):</label><br>
+        <input type="number" step="0.1" id="complexidadeRitmo" name="complexidadeRitmo" required><br><br>
+
+        <label for="tonicaIndex">Tônica Index (0-11):</label><br>
+        <input type="number" id="tonicaIndex" name="tonicaIndex" required><br><br>
+
+        <button type="submit">Prever Gênero</button>
+    </form>
+    <h2 id="result"></h2>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                intervaloMedio: parseFloat(document.getElementById('intervaloMedio').value),
+                ritmoMedio: parseFloat(document.getElementById('ritmoMedio').value),
+                complexidadeRitmo: parseFloat(document.getElementById('complexidadeRitmo').value),
+                tonicaIndex: parseFloat(document.getElementById('tonicaIndex').value),
+            };
+
+            try {
+                const response = await fetch('/api/previsao', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.status}`);
+                }
+
+                const result = await response.json();
+                resultDiv.textContent = `Gênero previsto: ${result.generoPrevisto}`;
+            } catch (error) {
+                console.error('Erro:', error);
+                resultDiv.textContent = 'Erro ao obter a previsão.';
+            }
+        });
+    </script>
+</body>
+</html>
