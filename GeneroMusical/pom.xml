@@ -59,6 +59,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
  <artifactId>deeplearning4j-ui</artifactId>
  <version>${deeplearning4j.version}</version>
 </dependency>
+<dependency>
+    <groupId>javax.annotation</groupId>
+    <artifactId>javax.annotation-api</artifactId>
+    <version>1.3.2</version>
+</dependency>
 </dependencies>
 
 <build>

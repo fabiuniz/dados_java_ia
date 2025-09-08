@@ -63,13 +63,14 @@ Este repositório contém scripts (`run_predicator.sh` e `run_music.sh`) para si
 
 3.  **Execute o projeto desejado:**
 
-    * Para o **PrecoCasaPredictor**:
+    * Para o **PrecoCasaPredictor CLI**:
         ```bash
         ./run_predicator.sh
         ```
-    * Para o **MusicGenreClassifier**:
+    * Para o **MusicGenreClassifier WebServer**:
         ```bash
         ./run_music.sh
+        http://localhost:8080/
         ```
 
     O script irá compilar e rodar o projeto automaticamente. A saída do terminal mostrará o processo de treinamento e o resultado da previsão.
