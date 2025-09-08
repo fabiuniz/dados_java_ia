@@ -2,34 +2,301 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classificador de Gênero Musical</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .emoji {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .form-container {
+            flex: 2;
+            padding-left: 0;
+            border-left: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            color: white;
+            box-shadow: 0 5px 15px rgba(250, 112, 154, 0.3);
+        }
+
+        .loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (min-width: 768px) and (orientation: landscape) {
+            body {
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                padding: 2rem;
+            }
+
+            .container {
+                max-width: 800px;
+                display: flex;
+                flex-direction: row;
+                gap: 2rem;
+                padding: 3rem;
+            }
+
+            .header {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 0;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .form-container {
+                flex: 2;
+                padding-left: 2rem;
+                border-left: 2px solid #e1e5e9;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Classifique um Gênero Musical 🎸</h1>
-    <form id="predictionForm">
-        <label for="intervaloMedio">Intervalo Médio:</label><br>
-        <input type="number" step="0.1" id="intervaloMedio" name="intervaloMedio" required><br><br>
+    <div class="container">
+        <div class="header">
+            <span class="emoji">🎵</span>
+            <h1>Classificador Musical</h1>
+        </div>
 
-        <label for="ritmoMedio">Ritmo Médio (BPM):</label><br>
-        <input type="number" id="ritmoMedio" name="ritmoMedio" required><br><br>
+        <div class="form-container">
+            <form id="predictionForm">
+                <div class="form-group">
+                    <label for="intervaloMedio">Intervalo Médio</label>
+                    <input type="number" step="0.1" id="intervaloMedio" name="intervaloMedio" required placeholder="Ex: 5.2">
+                    <div class="hint">Valores típicos: 1.0 - 10.0</div>
+                </div>
 
-        <label for="complexidadeRitmo">Complexidade do Ritmo (0.0-1.0):</label><br>
-        <input type="number" step="0.1" id="complexidadeRitmo" name="complexidadeRitmo" required><br><br>
+                <div class="form-group">
+                    <label for="ritmoMedio">Ritmo Médio (BPM)</label>
+                    <input type="number" id="ritmoMedio" name="ritmoMedio" required placeholder="Ex: 120">
+                    <div class="hint">Batidas por minuto: 60 - 200</div>
+                </div>
 
-        <label for="tonicaIndex">Tônica Index (0-11):</label><br>
-        <input type="number" id="tonicaIndex" name="tonicaIndex" required><br><br>
+                <div class="form-group">
+                    <label for="complexidadeRitmo">Complexidade do Ritmo</label>
+                    <input type="number" step="0.1" min="0" max="1" id="complexidadeRitmo" name="complexidadeRitmo" required placeholder="Ex: 0.7">
+                    <div class="hint">Escala de 0.0 a 1.0</div>
+                </div>
 
-        <button type="submit">Prever Gênero</button>
-    </form>
-    <h2 id="result"></h2>
+                <div class="form-group">
+                    <label for="tonicaIndex">Tônica Index</label>
+                    <input type="number" min="0" max="11" id="tonicaIndex" name="tonicaIndex" required placeholder="Ex: 5">
+                    <div class="hint">Índice da nota tônica: 0 - 11</div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    🎯 Classificar Gênero
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <span style="margin-left: 10px; color: #667eea;">Analisando...</span>
+            </div>
+
+            <div class="result" id="result"></div>
+        </div>
+    </div>
 
     <script>
         const form = document.getElementById('predictionForm');
         const resultDiv = document.getElementById('result');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-
+            
+            // Reset result
+            resultDiv.classList.remove('show', 'success', 'error');
+            
+            // Show loading
+            submitBtn.disabled = true;
+            loading.style.display = 'flex';
+            
             const data = {
                 intervaloMedio: parseFloat(document.getElementById('intervaloMedio').value),
                 ritmoMedio: parseFloat(document.getElementById('ritmoMedio').value),
@@ -38,6 +305,9 @@
             };
 
             try {
+                // Simulate API delay for better UX
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
                 const response = await fetch('/api/previsao', {
                     method: 'POST',
                     headers: {
@@ -49,13 +319,37 @@
                 if (!response.ok) {
                     throw new Error(`Erro na requisição: ${response.status}`);
                 }
-
+                
                 const result = await response.json();
-                resultDiv.textContent = `Gênero previsto: ${result.generoPrevisto}`;
+                showResult(`🎸 ${result.generoPrevisto}`, 'success');
+                
             } catch (error) {
                 console.error('Erro:', error);
-                resultDiv.textContent = 'Erro ao obter a previsão.';
+                showResult('❌ Erro ao classificar. Tente novamente.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
             }
+        });
+
+        function showResult(message, type) {
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            setTimeout(() => {
+                resultDiv.classList.add('show');
+            }, 100);
+        }
+
+        // Add input validation and real-time feedback
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.validity.valid) {
+                    input.style.borderColor = '#4ade80';
+                } else {
+                    input.style.borderColor = '#f87171';
+                }
+            });
         });
     </script>
 </body>
